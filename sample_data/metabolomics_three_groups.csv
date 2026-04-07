@@ -1,0 +1,10 @@
+SampleID,Group,Glucose,Lactate,Citrate,Alanine,Succinate,Pyruvate
+S01,Control,5.10,2.00,1.15,0.72,0.50,0.45
+S02,Control,5.00,1.95,1.18,0.68,0.47,0.43
+S03,Control,5.18,2.08,1.21,0.70,0.49,0.46
+S04,TreatmentA,6.05,2.55,1.42,0.84,0.62,0.58
+S05,TreatmentA,6.18,2.61,1.38,0.82,0.60,0.56
+S06,TreatmentA,6.10,2.48,1.45,0.86,0.63,0.59
+S07,TreatmentB,6.72,2.92,1.66,0.96,0.71,0.65
+S08,TreatmentB,6.84,3.01,1.72,1.02,0.74,0.68
+S09,TreatmentB,6.79,2.97,1.69,0.99,0.72,0.66
