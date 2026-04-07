@@ -119,6 +119,7 @@ preprocess_metabolites <- function(df, metabolite_cols, missing_method, transfor
       rng[!is.finite(rng) | rng == 0] <- 1
       mat <- sweep(sweep(mat, 2, minv, "-"), 2, rng, "/")
     }
+    mat[!is.finite(mat)] <- 0
     met <- as.data.frame(mat, check.names = FALSE)
   }
 
@@ -130,7 +131,33 @@ build_pca_plot <- function(met_matrix, group, sample_labels) {
   if (ncol(met_matrix) < 2 || nrow(met_matrix) < 3) {
     return(NULL)
   }
-  pca_fit <- prcomp(met_matrix, center = TRUE, scale. = FALSE)
+
+  keep_rows <- complete.cases(met_matrix)
+  if (!all(keep_rows)) {
+    met_matrix <- met_matrix[keep_rows, , drop = FALSE]
+    group <- group[keep_rows]
+    sample_labels <- sample_labels[keep_rows]
+  }
+
+  if (ncol(met_matrix) < 2 || nrow(met_matrix) < 3) {
+    return(NULL)
+  }
+
+  col_var <- apply(met_matrix, 2, var, na.rm = TRUE)
+  keep_cols <- is.finite(col_var) & col_var > 0
+  met_matrix <- met_matrix[, keep_cols, drop = FALSE]
+  if (ncol(met_matrix) < 2) {
+    return(NULL)
+  }
+
+  pca_fit <- tryCatch(
+    prcomp(met_matrix, center = TRUE, scale. = FALSE),
+    error = function(e) NULL
+  )
+  if (is.null(pca_fit) || ncol(pca_fit$x) < 2) {
+    return(NULL)
+  }
+
   pca_scores <- as.data.frame(pca_fit$x[, 1:2, drop = FALSE])
   colnames(pca_scores) <- c("PC1", "PC2")
   pca_scores$Group <- as.factor(group)
@@ -542,7 +569,10 @@ server <- function(input, output, session) {
     req(!is.null(df))
     req(length(input$metabolite_cols) > 0)
 
-    metabolite_cols <- input$metabolite_cols
+    metabolite_cols <- intersect(input$metabolite_cols, names(df))
+    if (length(metabolite_cols) == 0) {
+      stop("No valid metabolite columns were selected.")
+    }
     group_col <- if (nzchar(input$group_col) && input$group_col %in% names(df)) input$group_col else ""
     sample_col <- if (nzchar(input$sample_col) && input$sample_col %in% names(df)) input$sample_col else ""
 
