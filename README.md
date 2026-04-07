@@ -52,6 +52,40 @@ Or inside an interactive R session:
 shiny::runApp("app.R")
 ```
 
+## Sample file list (import templates)
+
+Use the files in `sample_data/` as formatting references before importing your own dataset:
+
+- `sample_data/metabolomics_two_groups.csv`
+  - Includes `SampleID`, `Group` (2 classes: Control/Treatment), and metabolite columns.
+  - Good for: PCA, heatmap, correlation, volcano plot, t-test, top-feature boxplots, per-metabolite bar plots.
+
+- `sample_data/metabolomics_three_groups.csv`
+  - Includes `SampleID`, `Group` (3 classes), and metabolite columns.
+  - Good for: PCA, heatmap, correlation, ANOVA, top-feature boxplots, per-metabolite bar plots.
+
+- `sample_data/metabolomics_no_group.csv`
+  - Includes `SampleID` and metabolite columns only (no group/class column).
+  - Good for: PCA, heatmap, correlation, per-metabolite bar plots.
+  - Group-dependent analyses (volcano, t-test, ANOVA) will be skipped.
+
+### Required format rules
+
+- **One row = one sample**
+- **One column = one field**
+  - Metadata columns (e.g., `SampleID`, `Group`) are optional but recommended.
+  - Metabolite columns should be numeric (or numeric-like strings).
+- Keep the first row as column headers.
+- Avoid merged cells and free-text notes inside the data table.
+
+### Using Excel files
+
+If you use Excel (`.xls/.xlsx`), mirror the same column layout as the sample CSV files:
+
+- same header names
+- same row-wise sample layout
+- one sample per row
+
 ## Expected data shape
 
 - Rows should represent samples.
